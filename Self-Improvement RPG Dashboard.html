@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self-Improvement RPG Dashboard</title>
+    <style>
+        /* Minimalist CSS - Feel free to expand */
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2, h3 {
+            margin-top: 0;
+        }
+
+        /* To-Do List Styles */
+        #todo-list {
+            margin-bottom: 20px;
+        }
+
+        #todo-list input[type="text"] {
+            width: 70%;
+            padding: 8px;
+            margin-right: 5px;
+        }
+
+        #todo-list button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        #todo-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #todo-list li {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        #todo-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Journal Styles */
+        #journal textarea {
+            width: 100%;
+            height: 200px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* Habit Tracker Styles */
+        #habit-tracker table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #habit-tracker th, #habit-tracker td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #habit-tracker th {
+            background-color: #f5f5f5;
+        }
+
+        /* Calendar Styles (basic) */
+        #calendar {
+            margin-bottom: 20px;
+        }
+
+        /* RPG Skill Leveling Styles */
+        #skills {
+            margin-bottom: 20px;
+        }
+
+        .skill {
+            margin-bottom: 10px;
+        }
+
+        .skill-bar {
+            background-color: #ddd;
+            height: 10px;
+            width: 100%;
+            position: relative;
+        }
+
+        .skill-level {
+            background-color: #4CAF50;
+            height: 10px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Appointment Tracker Styles */
+        #appointments {
+            margin-bottom: 20px;
+        }
+
+        #appointments input[type="datetime-local"] {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Self-Improvement RPG Dashboard</h1>
+
+    <section id="todo-list">
+        <h2>To-Do List</h2>
+        <input type="text" id="new-task" placeholder="Add a new task">
+        <button onclick="addTask()">Add Task</button>
+        <ul id="tasks"></ul>
+    </section>
+
+    <section id="journal">
+        <h2>Journal</h2>
+        <textarea id="journal-entry" placeholder="Write your thoughts..."></textarea>
+        <button onclick="saveJournal()">Save Entry</button>
+        <button onclick="exportJournal()">Export Journal</button>
+        <button onclick="importJournal()">Import Journal</button>
+    </section>
+
+    <section id="habit-tracker">
+        <h2>Habit Tracker</h2>
+        <table id="habit-table">
+            <thead>
+            <tr>
+                <th>Habit</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+                <th>Sun</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <input type="text" id="new-habit" placeholder="Add a new habit">
+        <button onclick="addHabit()">Add Habit</button>
+    </section>
+
+    <section id="calendar">
+        <h2>Calendar</h2>
+        <div id="calendar-display"></div>
+    </section>
+
+    <section id="appointments">
+        <h2>Appointment Tracker</h2>
+        <input type="datetime-local" id="appointment-time">
+        <input type="text" id="appointment-description" placeholder="Description">
+        <button onclick="addAppointment()">Add Appointment</button>
+        <ul id="appointment-list"></ul>
+    </section>
+
+    <section id="skills">
+        <h2>Skills</h2>
+        <div class="skill">
+            <label for="strength">Strength: <span id="strength-level">1</span></label>
+            <div class="skill-bar">
+                <div class="skill-level" id="strength" style="width: 10%;"></div>
+            </div>
+            <button onclick="increaseSkill('strength')">Train Strength</button>
+        </div>
+
+        <div class="skill">
+            <label for="intelligence">Intelligence: <span id="intelligence-level">1</span></label>
+            <div class="skill-bar">
+                <div class="skill-level" id="intelligence" style="width: 10%;"></div>
+            </div>
+            <button onclick="increaseSkill('intelligence')">Train Intelligence</button>
+        </div>
+
+        <div class="skill">
+            <label for="charisma">Charisma: <span id="charisma-level">1</span></label>
+            <div class="skill-bar">
+                <div class="skill-level" id="charisma" style="width: 10%;"></div>
+            </div>
+            <button onclick="increaseSkill('charisma')">Train Charisma</button>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    // To-Do List
+    function addTask() {
+        const taskInput = document.getElementById("new-task");
+        const taskText = taskInput.value.trim();
+        if (taskText !== "") {
+            const taskList = document.getElementById("tasks");
+            const listItem = document.createElement("li");
+            listItem.textContent = taskText;
+            taskList.appendChild(listItem);
+            taskInput.value = "";
+        }
+    }
+
+    // Journal
+    function saveJournal() {
+        const journalEntry = document.getElementById("journal-entry").value;
+        localStorage.setItem("journalEntry", journalEntry);
+        alert("Journal entry saved!");
+    }
+
+    function exportJournal() {
+        const journalEntry = localStorage.getItem("journalEntry") || "";
+        const blob = new Blob([journalEntry], {type: "text/plain"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "journal.txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function importJournal() {
+        const input = document.createElement('input');
+        input.type = 'file';
+
+        input.onchange = e => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.readAsText(file, 'UTF-8');
+
+            reader.onload = readerEvent => {
+                const content = readerEvent.target.result;
+                document.getElementById("journal-entry").value = content;
+                saveJournal();
+            }
+        }
+
+        input.click();
+    }
+
+    // Habit Tracker
+    function addHabit() {
+        const habitInput = document.getElementById("new-habit");
+        const habitName = habitInput.value.trim();
+        if (habitName !== "") {
+            const habitTable = document.getElementById("habit-table").getElementsByTagName('tbody')[0];
+            const newRow = habitTable.insertRow();
+
+            const habitCell = newRow.insertCell();
+            habitCell.textContent = habitName;
+
+            for (let i = 1; i <= 7; i++) {
+                const dayCell = newRow.insertCell();
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                dayCell.appendChild(checkbox);
+            }
+
+            habitInput.value = "";
+        }
+    }
+
+    // Calendar (Basic Placeholder)
+    document.getElementById("calendar-display").textContent = "Calendar Functionality Coming Soon!";
+
+    // Appointment Tracker
+    function addAppointment() {
+        const appointmentTime = document.getElementById("appointment-time").value;
+        const appointmentDescription = document.getElementById("appointment-description").value;
+
+        if (appointmentTime && appointmentDescription) {
+            const appointmentList = document.getElementById("appointment-list");
+            const listItem = document.createElement("li");
+            listItem.textContent = `${appointmentTime} - ${appointmentDescription}`;
+            appointmentList.appendChild(listItem);
+
+            document.getElementById("appointment-time").value = "";
+            document.getElementById("appointment-description").value = "";
+        }
+    }
+
+    // RPG Skill Leveling
+    function increaseSkill(skillName) {
+        const skillLevelElement = document.getElementById(skillName + "-level");
+        const skillBarElement = document.getElementById(skillName);
+        let currentLevel = parseInt(skillLevelElement.textContent);
+        let currentWidth = parseInt(skillBarElement.style.width);
+
+        if (currentLevel < 100) {
+            currentLevel++;
+            currentWidth += 1;
+            skillLevelElement.textContent = currentLevel;
+            skillBarElement.style.width = currentWidth + "%";
+        } else {
+            alert("You've reached the maximum level for this skill!");
+        }
+    }
+
+    // Load Journal Entry on Page Load
+    window.onload = function() {
+        const savedJournalEntry = localStorage.getItem("journalEntry");
+        if (savedJournalEntry) {
+            document.getElementById("journal-entry").value = savedJournalEntry;
+        }
+    };
+</script>
+
+</body>
+</html>
